@@ -7,11 +7,15 @@ var PORT = 8080;
 /*************/
 /*** SETUP ***/
 /*************/
+const fs = require('fs');
 var express = require('express');
-var http = require('http');
-var bodyParser = require('body-parser')
-var main = express()
-var server = http.createServer(main)
+var https = require('https');
+var bodyParser = require('body-parser');
+var main = express();
+var server = https.createServer({
+    key: fs.readFileSync('ssl/privkey.pem'),
+    cert: fs.readFileSync('ssl/cert.pem')
+}, main);
 var io  = require('socket.io').listen(server);
 //io.set('log level', 2);
 
