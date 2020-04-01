@@ -90,7 +90,7 @@
                 signaling_socket.on('mute', function(value) {
                     if (isMutable) {
                         console.log('MUTING this window', value);
-                        let media = USE_VIDEO ? $("video") : $("audio");
+                        let media = USE_VIDEO ? $("video.remote") : $("audio.remote");
                         media.each( (_,el) => el.muted = value);
                     }
                 });
