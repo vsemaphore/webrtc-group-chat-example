@@ -15,6 +15,14 @@
                 height:  240px;
                 border:  1px solid black;
             }
+            .local {
+                border:  1px solid blue;
+            }
+            #muteControls {
+                background-color: #666;
+                text-align: center;
+                padding: 10px;
+            }
         </style>
 
         <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -39,8 +47,20 @@
             var local_media_stream = null; /* our own microphone / webcam */
             var peers = {};                /* keep track of our peer connections, indexed by peer_id (aka socket.io id) */
             var peer_media_elements = {};  /* keep track of our <video>/<audio> tags, indexed by peer_id */
+            const isMutable = (location.hash === '#mutable');
 
             function init() {
+                $('#mute').click(()=>{
+                    signaling_socket.emit('mute', true);
+                });
+                $('#unmute').click(()=>{
+                    signaling_socket.emit('mute', false);
+                });
+
+                if (isMutable) {
+                    $('#muteControls').hide();
+                }
+
                 console.log("Connecting to signaling server");
                 signaling_socket = io(SIGNALING_SERVER);
                 signaling_socket = io();
@@ -67,6 +87,14 @@
                     peers = {};
                     peer_media_elements = {};
                 });
+                signaling_socket.on('mute', function(value) {
+                    if (isMutable) {
+                        console.log('MUTING this window', value);
+                        let media = USE_VIDEO ? $("video") : $("audio");
+                        media.each( (_,el) => el.muted = value);
+                    }
+                });
+
                 function join_chat_channel(channel, userdata) {
                     signaling_socket.emit('join', {"channel": channel, "userdata": userdata});
                 }
@@ -116,6 +144,7 @@
                             remote_media.attr("muted", "true");
                         }
                         remote_media.attr("controls", "");
+                        remote_media.addClass("remote");
                         peer_media_elements[peer_id] = remote_media;
                         $('body').append(remote_media);
                         attachMediaStream(remote_media[0], event.stream);
@@ -259,8 +288,8 @@
                     var local_media = USE_VIDEO ? $("<video>") : $("<audio>");
                     local_media.attr("autoplay", "autoplay");
                     local_media.attr("muted", "true"); /* always mute ourselves by default */
+                    local_media.addClass("local");
                     local_media[0].muted = true;
-                    local_media.attr("controls", "");
                     $('body').append(local_media);
                     attachMediaStream(local_media[0], stream);
 
@@ -275,6 +304,10 @@
         </script>
     </head>
     <body onload='init()'>
+        <div id="muteControls">
+            <button id="mute">MUTE</button>
+            <button id="unmute">UNMUTE</button>
+        </div>
         <!-- 
         the <video> and <audio> tags are all added and removed dynamically
         in 'onAddStream', 'setup_local_media', and 'removePeer'/'disconnect'

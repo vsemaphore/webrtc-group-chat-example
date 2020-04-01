@@ -24,9 +24,9 @@ server.listen(PORT, null, function() {
 });
 //main.use(express.bodyParser());
 
-main.get('/', function(req, res){ res.sendFile(__dirname + '/client.html'); });
+main.get('/', function(req, res){ res.sendFile(__dirname + '/index.html'); });
 // main.get('/index.html', function(req, res){ res.sendfile('newclient.html'); });
-// main.get('/client.html', function(req, res){ res.sendfile('newclient.html'); });
+main.get('/client.html', function(req, res){ res.sendfile('client.html'); });
 
 
 
@@ -59,6 +59,12 @@ io.sockets.on('connection', function (socket) {
         delete sockets[socket.id];
     });
 
+    socket.on('mute', function (value) {
+        console.log('MUTE requested', value);
+        for(let id in sockets ) {
+            sockets[id].emit('mute', value);
+        }
+    });
 
     socket.on('join', function (config) {
         console.log("["+ socket.id + "] join ", config);
