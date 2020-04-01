@@ -3,7 +3,8 @@
   "version": "",
   "description": "About =====",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "serve": "pm2 start --watch --name server app.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
