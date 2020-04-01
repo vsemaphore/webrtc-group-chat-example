@@ -45,9 +45,9 @@
                 signaling_socket = io(SIGNALING_SERVER);
                 signaling_socket = io();
 
-                signaling_socket.on('connect', function() {
+                signaling_socket.on('connect', async function() {
                     console.log("Connected to signaling server");
-                    setup_local_media(function() {
+                    await setup_local_media(function() {
                         /* once the user has given us access to their
                          * microphone/camcorder, join the channel and start peering up */
                         join_chat_channel(DEFAULT_CHANNEL, {'whatever-you-want-here': 'stuff'});
@@ -237,7 +237,7 @@
             /***********************/
             /** Local media stuff **/
             /***********************/
-            function setup_local_media(callback, errorback) {
+            async function setup_local_media(callback, errorback) {
                 if (local_media_stream != null) {  /* ie, if we've already been initialized */
                     if (callback) callback();
                     return; 
@@ -246,36 +246,30 @@
                  * attach it to an <audio> or <video> tag if they give us access. */
                 console.log("Requesting access to local audio / video inputs");
 
-
-                // navigator.getUserMedia = ( navigator.getUserMedia ||
-                //         navigator.mediaDevices.getUserMedia ||
-                //         navigator.webkitGetUserMedia ||
-                //         navigator.mozGetUserMedia ||
-                //         navigator.msGetUserMedia);
-
                 attachMediaStream = function(element, stream) {
                     console.log('DEPRECATED, attachMediaStream will soon be removed.');
                     element.srcObject = stream;
                  };
 
-                navigator.mediaDevices.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO},
-                    function(stream) { /* user accepted access to a/v */
-                        console.log("Access granted to audio/video");
-                        local_media_stream = stream;
-                        var local_media = USE_VIDEO ? $("<video>") : $("<audio>");
-                        local_media.attr("autoplay", "autoplay");
-                        local_media.attr("muted", "true"); /* always mute ourselves by default */
-                        local_media.attr("controls", "");
-                        $('body').append(local_media);
-                        attachMediaStream(local_media[0], stream);
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO});
 
-                        if (callback) callback();
-                    },
-                    function() { /* user denied access to a/v */
-                        console.log("Access denied for audio/video");
-                        alert("You chose not to provide access to the camera/microphone, demo will not work.");
-                        if (errorback) errorback();
-                    });
+                    console.log("Access granted to audio/video");
+                    local_media_stream = stream;
+                    var local_media = USE_VIDEO ? $("<video>") : $("<audio>");
+                    local_media.attr("autoplay", "autoplay");
+                    local_media.attr("muted", "true"); /* always mute ourselves by default */
+                    local_media.attr("controls", "");
+                    $('body').append(local_media);
+                    attachMediaStream(local_media[0], stream);
+
+                    if (callback) callback();
+                } catch(e) {
+                    console.error("Access denied for audio/video", e);
+                    alert("You chose not to provide access to the camera/microphone, demo will not work.");
+                    if (errorback) errorback();
+
+                }
             }
         </script>
     </head>
