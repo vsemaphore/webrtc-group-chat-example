@@ -16,7 +16,7 @@ var server = https.createServer({
     key: fs.readFileSync('ssl/privkey.pem'),
     cert: fs.readFileSync('ssl/cert.pem')
 }, main);
-var io  = require('socket.io').listen(server);
+var io  = require('socket.io').listen(server, '0.0.0.0');
 //io.set('log level', 2);
 
 server.listen(PORT, null, function() {
