@@ -101,7 +101,10 @@
                     if (isMutable) {
                         console.log('MUTING this window', value);
                         let media = USE_VIDEO ? $("video.remote") : $("audio.remote");
-                        media.each( (_,el) => el.muted = value);
+                        media.each( (_,el) => {
+                            el.attr('muted', value);
+                            el[0].muted = value;
+                        });
                     }
                 });
 
