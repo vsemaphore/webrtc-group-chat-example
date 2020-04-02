@@ -24,7 +24,8 @@
                 background-color: #666;
                 text-align: center;
                 padding: 10px;
-                width: 100px;
+                margin-top: 10px;
+                width: 320px;
             }
         </style>
 
@@ -58,6 +59,12 @@
                 });
                 $('#unmute').click(()=>{
                     signaling_socket.emit('mute', false);
+                });
+                $('#ptt').mousedown(()=>{
+                    signaling_socket.emit('mute', false);
+                });
+                $('#ptt').mouseup(()=>{
+                    signaling_socket.emit('mute', true);
                 });
 
                 if (isMutable) {
@@ -312,6 +319,7 @@
         <div id="muteControls">
             <button id="mute">MUTE</button>
             <button id="unmute">UNMUTE</button>
+            <button id="ptt">PUSH TO TALK</button>
         </div>
         <!-- 
         the <video> and <audio> tags are all added and removed dynamically
