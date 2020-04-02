@@ -27,6 +27,11 @@
                 margin-top: 10px;
                 width: 300px;
             }
+            #muteIndicator {
+                background-color: #444444;
+                text-align: center;
+                color: #ccc;
+            }
         </style>
 
         <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -98,6 +103,11 @@
                     peer_media_elements = {};
                 });
                 signaling_socket.on('mute', function(value) {
+                    if (value) {
+                        $('#muteIndicator').show();
+                    } else {
+                        $('#muteIndicator').hide();
+                    }
                     if (isMutable) {
                         console.log('MUTING this window', value);
                         let media = USE_VIDEO ? $("video.remote") : $("audio.remote");
@@ -326,9 +336,6 @@
             <button id="unmute">UNMUTE</button>
             <button id="ptt">PUSH TO TALK</button>
         </div>
-        <!-- 
-        the <video> and <audio> tags are all added and removed dynamically
-        in 'onAddStream', 'setup_local_media', and 'removePeer'/'disconnect'
-        -->
+        <div id="muteIndicator">MANAGERS ARE NOW MUTED</div>
     </body>
 </html>
