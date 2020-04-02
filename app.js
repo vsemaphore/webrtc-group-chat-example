@@ -27,6 +27,7 @@ server.listen(PORT, null, function() {
 main.get('/', function(req, res){ res.sendFile(__dirname + '/index.html'); });
 // main.get('/index.html', function(req, res){ res.sendfile('newclient.html'); });
 main.get('/client.html', function(req, res){ res.sendfile('client.html'); });
+main.get('/admin-logo.png', function(req, res){ res.sendfile('admin-logo.png'); });
 
 
 

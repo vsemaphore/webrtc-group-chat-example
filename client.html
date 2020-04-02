@@ -8,7 +8,9 @@
         <!-- <script src="https://webrtc.googlecode.com/svn/trunk/samples/js/base/adapter.js"></script> -->
         <style>
             html, body { 
-                background-color: #333; 
+                background-color: #333;
+                font-family: Monaco, sans-serif;
+                color: #333;
             }
             video {
                 width:  320px;
@@ -22,6 +24,7 @@
                 background-color: #666;
                 text-align: center;
                 padding: 10px;
+                width: 100px;
             }
         </style>
 
@@ -146,7 +149,7 @@
                         remote_media.attr("controls", "");
                         remote_media.addClass("remote");
                         peer_media_elements[peer_id] = remote_media;
-                        $('body').append(remote_media);
+                        $('#container').append(remote_media);
                         attachMediaStream(remote_media[0], event.stream);
                     }
 
@@ -290,7 +293,7 @@
                     local_media.attr("muted", "true"); /* always mute ourselves by default */
                     local_media.addClass("local");
                     local_media[0].muted = true;
-                    $('body').append(local_media);
+                    $('#container').append(local_media);
                     attachMediaStream(local_media[0], stream);
 
                     if (callback) callback();
@@ -304,6 +307,8 @@
         </script>
     </head>
     <body onload='init()'>
+        <img src="admin-logo.png">
+        <div id="container"></div>
         <div id="muteControls">
             <button id="mute">MUTE</button>
             <button id="unmute">UNMUTE</button>
